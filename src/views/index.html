@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>dice-game</title>
+    <style>
+        table tr td {
+            height: 50px;
+            width: 50px;
+            text-align: center;
+        }
+
+        button {
+            height: 50px;
+            width: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    var socket = io();
+    var currentSocketId = null;
+
+    socket.on('connect', function () {
+        console.log("socket :: socketId", socket.id)
+        currentSocketId = socket.id
+    })
+    socket.on('res', (data) => {
+        console.log("socket :: res", data);
+    });
+
+    function takeUserName() {
+        var txt;
+        var person = prompt("Please enter your name:", "");
+        if (person == null || person == "") {
+            txt = "User cancelled the prompt.";
+        } else {
+            txt = "Hello " + person + "!";
+        }
+        document.getElementById("userName").innerHTML = txt;
+        document.getElementById("status").innerHTML = 'Wait for other user join!';
+        socket.emit("req", {
+            en: 'USERNAME',
+            data: {
+                userName: person,
+            },
+        });
+    }
+
+    function takeTurn() {
+        console.log("takeTurn ::");
+    }
+</script>
+
+<body onload=takeUserName()>
+    <div id="box" align="center">
+        <p id="userName"></p>
+        <p id="status"></p>
+        <table border="10" id="table">
+            <tr>
+                <td><button id='dice' onclick="takeTurn()" value=""></button> </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>
