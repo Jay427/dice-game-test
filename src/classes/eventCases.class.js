@@ -6,7 +6,7 @@
 const {
     defaultSocketSchema,
 } = require('../../src/joiSchema');
-const playingTableClass = require('./playingTable.class');
+const playingTableClass = require('../../src/classes/playingTable.class');
 
 /**
  * Bind socket event function
@@ -29,6 +29,10 @@ const bindSocketToEvent = async (socket) => {
 
             case 'GAME_USER_ADD':
                 playingTableClass.gameUserAdd(socket, data.data);
+                break;
+
+            case 'GAME_USER_TURN':
+                playingTableClass.gameUserTurn(socket, data.data);
                 break;
 
             default:

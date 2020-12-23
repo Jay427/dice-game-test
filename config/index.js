@@ -21,6 +21,8 @@ const envVarsSchema = Joi.object({
     MONGO_DB_NAME: Joi.string().default('dice-game'),
     MONGO_USERNAME: Joi.string().default('root'),
     MONGO_PASSWORD: Joi.string().default(''),
+    WINNING_SCORE: Joi.number().default(20), //61
+    TURN_TIMER: Joi.number().default(10), //30
 }).unknown().required();
 
 /**
@@ -42,9 +44,11 @@ const config = {
     env: envVars.NODE_ENV,
     port: envVars.PORT,
     baseUrl: envVars.BASE_URL,
+    winningScore: envVars.WINNING_SCORE,
+    turnTimer: envVars.TURN_TIMER,
     mongo: {
         host: envVars.MONGO_HOST,
-        database: envVars.MONGO_DB_NAME,
+        dbName: envVars.MONGO_DB_NAME,
         user: envVars.MONGO_USERNAME,
         password: envVars.MONGO_PASSWORD,
     },

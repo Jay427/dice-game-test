@@ -65,3 +65,61 @@ exports.findOnePlayingTable = async (query, fields = []) => {
     }
 
 };
+
+/**
+ * Find one and update playing table
+ */
+exports.findOneAndUpdatePlayingTable = async (query, updateData) => {
+
+    const container = {
+        error: null,
+        data: null
+    };
+
+    try {
+
+        const playingTable = await PlayingTable.findOneAndUpdate(query, updateData, {
+            new: true
+        });
+
+        container.data = playingTable;
+
+        return (container);
+
+    } catch (error) {
+
+        container.error = error;
+
+        return (container);
+
+    }
+
+};
+
+/**
+ * Delete many playing table
+ */
+exports.deleteManyPlayingTable = async (query) => {
+
+    const container = {
+        error: null,
+        data: null
+    };
+
+    try {
+
+        const playingTable = await PlayingTable.deleteMany(query);
+
+        container.data = playingTable;
+
+        return (container);
+
+    } catch (error) {
+
+        container.error = error;
+
+        return (container);
+
+    }
+
+};

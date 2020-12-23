@@ -1,30 +1,21 @@
-# Blog
+# Dice-Game
 
-### Create database on local mysql server
-```
-CREATE DATABASE blog # Development database
-
-CREATE DATABASE test_blog # Testing database
-```
+### Pre-Request
+- Install node js and mongodb on local server.
 
 ### Server start process
 ```
-Copy ./divyesh-test/.env.dist to ./divyesh-test/.env. Change according to your needs.
+Copy ./dice-game-test/.env.dist to ./dice-game-test/.env. Change according to your needs.
 
 npm install
-
-npm run migrate
 
 npm start
 ```
 
-### API test command
+### Base URL
+- http://localhost:4000/
 
-```
-npm test
-```
-
-### Postman Doc
-```
-https://documenter.getpostman.com/view/6324262/TVsoFVJT
-```
+### Overview playing
+- Open four tabs in the browser using this URL http://localhost:4000/ and give a player name in the popup
+- According to document 30 second timer start for each user can click on dice
+- If a user does not take turn timer will expire and take a turn from the backend

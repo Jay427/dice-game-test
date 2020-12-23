@@ -11,11 +11,14 @@ const server = require('http').Server(app);
 const cors = require("cors");
 const config = require('../config');
 const logger = require('./helpers/logger');
-const io = require('socket.io')(server);
+global.io = require('socket.io')(server); // Demo purpose declare as global variable
 const {
     bindSocketToEvent,
     disconnectSocketEventHandle,
 } = require('../src/classes/eventCases.class');
+const {
+    deleteManyPlayingTable,
+} = require('../src/services/playingTableService');
 
 /**
  * Set cors middleware
@@ -59,8 +62,21 @@ io.on('connection', (socket) => {
 /**
  * Server listen
  */
-server.listen(config.port, () => {
+server.listen(config.port, async () => {
 
     logger.info(`Server :: Start :: Port :: ${config.port}`);
 
+    await removePendingTable();
+
 });
+
+/**
+ * Remove pending table from database for manage playing table
+ */
+const removePendingTable = async () => {
+
+    await deleteManyPlayingTable({
+        status: 0,
+    });
+
+};

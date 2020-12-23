@@ -22,13 +22,47 @@
 <script>
     var socket = io();
     var currentSocketId = null;
+    var intervalID = null;
 
     socket.on('connect', function () {
         console.log("socket :: socketId", socket.id)
         currentSocketId = socket.id
-    })
+    });
+
     socket.on('res', (data) => {
         console.log("socket :: res", data);
+        switch (data.en) {
+
+            case 'TAKE_TURN':
+                if (currentSocketId === data.data.currentTurnSocketId) {
+                    document.getElementById("status").innerHTML = 'You turn';
+                    document.getElementById("dice").disabled = false;
+                    intervalManager(true, 10);
+                } else {
+                    document.getElementById("status").innerHTML = 'Wait for your turn';
+                    document.getElementById("dice").disabled = true;
+                    intervalManager(false);
+                }
+                var scoreText = ""
+                data.data.players.map((item) => {
+                    scoreText = scoreText + `:: ${item.userName} : ${item.score} ::`
+                });
+                document.getElementById("score").innerHTML = scoreText;
+                document.getElementById("dice").innerHTML = data.data.diceNumber;
+                break;
+
+            case 'GAME_END':
+                if (currentSocketId === data.data.winnerSocketId) {
+                    document.getElementById("status").innerHTML = 'You won';
+                } else {
+                    document.getElementById("status").innerHTML = 'You lost';
+                }
+                break;
+
+            default:
+                console.log('Socket :: Event Case Not Match ::');
+
+        }
     });
 
     function takeUserName() {
@@ -42,7 +76,7 @@
         document.getElementById("userName").innerHTML = txt;
         document.getElementById("status").innerHTML = 'Wait for other user join!';
         socket.emit("req", {
-            en: 'USERNAME',
+            en: 'GAME_USER_ADD',
             data: {
                 userName: person,
             },
@@ -51,6 +85,33 @@
 
     function takeTurn() {
         console.log("takeTurn ::");
+        const diceNumber = Math.floor(Math.random() * 6) + 1;
+        socket.emit("req", {
+            en: 'GAME_USER_TURN',
+            data: {
+                diceNumber,
+            },
+        });
+    }
+
+    function intervalManager(flag, time) {
+        if (flag) {
+            document.getElementById("timer").innerHTML = `Timer - ${time}`;
+            intervalID = setInterval(() => {
+                if (time > 0) {
+                    time--;
+                    if (time === 0) {
+                        document.getElementById("timer").innerHTML = '';
+                    }
+                    document.getElementById("timer").innerHTML = `Timer - ${time}`;
+                } else {
+                    clearInterval(intervalID);
+                }
+            }, 1000);
+        } else {
+            clearInterval(intervalID);
+            document.getElementById("timer").innerHTML = '';
+        }
     }
 </script>
 
@@ -58,9 +119,11 @@
     <div id="box" align="center">
         <p id="userName"></p>
         <p id="status"></p>
+        <p id="score"></p>
+        <p id="timer"></p>
         <table border="10" id="table">
             <tr>
-                <td><button id='dice' onclick="takeTurn()" value=""></button> </td>
+                <td><button id='dice' onclick="takeTurn()" value="" disabled="true"></button> </td>
             </tr>
         </table>
     </div>
